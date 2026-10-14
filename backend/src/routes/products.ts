@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Request, type Response, type NextFunction } from 'express';
 import type { ProductRepository } from '../repositories/productRepository.js';
 import { HttpError } from '../errors/httpError.js';
 import { parseProductBody } from '../validation/product.js';
@@ -11,7 +11,7 @@ function notFound(): HttpError {
 export function createProductRouter(repository: ProductRepository): Router {
   const router = Router();
 
-  router.post('/', async (req, res, next) => {
+  router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const input = parseProductBody(req.body);
       const product = await repository.create(input);
@@ -21,7 +21,7 @@ export function createProductRouter(repository: ProductRepository): Router {
     }
   });
 
-  router.get('/', async (_req, res, next) => {
+  router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const products = await repository.findAll();
       res.status(200).json(products);
@@ -30,9 +30,9 @@ export function createProductRouter(repository: ProductRepository): Router {
     }
   });
 
-  router.put('/:id', async (req, res, next) => {
+  router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const id = assertUuid(req.params.id ?? '');
+      const id = assertUuid(req.params.id);
       const input = parseProductBody(req.body);
       const product = await repository.update(id, input);
 
@@ -46,9 +46,9 @@ export function createProductRouter(repository: ProductRepository): Router {
     }
   });
 
-  router.delete('/:id', async (req, res, next) => {
+  router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const id = assertUuid(req.params.id ?? '');
+      const id = assertUuid(req.params.id);
       const deleted = await repository.delete(id);
 
       if (!deleted) {
@@ -63,3 +63,4 @@ export function createProductRouter(repository: ProductRepository): Router {
 
   return router;
 }
+
