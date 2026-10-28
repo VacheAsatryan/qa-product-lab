@@ -30,6 +30,22 @@ export function createProductRouter(repository: ProductRepository): Router {
     }
   });
 
+  router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = assertUuid(req.params.id);
+      const product = await repository.findById(id);
+
+      if (!product) {
+        throw notFound();
+      }
+
+      res.status(200).json(product);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+
   router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = assertUuid(req.params.id);
